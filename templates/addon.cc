@@ -28,13 +28,13 @@ using Nan::To;
 
 /* extern interface for Rust functions */
 extern "C" {
-  {{extern_c_functions}}
+{{extern_c_functions}}
 }
 
 {{nan_methods}}
 
 NAN_MODULE_INIT(InitAll) {;
-  {{nan_inits}}
+{{nan_inits}}
 }
 
 

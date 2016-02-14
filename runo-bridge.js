@@ -17,7 +17,8 @@ var allowedTypes = [
   /* some primitives from Rust's libc */
   "c_double", //JS number
   "c_int", //JS number
-  "boolean", // JS boolean
+  "bool", // JS boolean
+  "void"
 
   /* pointers */
   // "pointer_c_char", //JS String
@@ -42,8 +43,8 @@ var extern_c_functions = [];
 var nan_methods = [];
 var nan_inits = [];
 
-function unsupported(type){
-  throw new Error(type+" is not a supported type, only "+(allowedTypes.join(", "))+" supported");
+function mapToCType(type) {
+  return type.replace("c_","");
 }
 
 function createExternDefinition (func) {
@@ -51,47 +52,44 @@ function createExternDefinition (func) {
   var out = "";
   func.inputs.forEach(function(input){
     if (allowedTypes.indexOf(input.type)<0) {
-      unsupported(input.type);
+      throw Error("unsupported type");
     }
-    inputs.push(input.type.replace("c_","")+" "+input.name)
+    inputs.push(mapToCType(input.type)+" "+input.name)
   });
-  switch(func.output) {
-    case "c_int":
-      return 'extern "C" int ' + func.name + '('+ inputs.join(", ") +');'
-      break;
-    default:
-      unsupported(func.output);
+  if (allowedTypes.indexOf(func.output)<0) {
+    throw Error("unsupported type");
   }
+  return '  extern "C" '+mapToCType(func.output)+ ' '+func.name + '('+ inputs.join(", ") +');';
 }
 
 function createNanMethod (func) {
   var inputs = [];
   var externParams = [];
   var v8ReturnValue;
-  var returnType;
   var out = "";
   func.inputs.forEach(function(input, index){
     switch (input.type) {
       case "c_int":
-        //TODO: handle unexpected values
-        inputs.push('int '+input.name+' = To<int>(info['+index+']).FromJust();')
-        externParams.push(input.name);
+      case "bool":
+        var inType = mapToCType(input.type);
+        inputs.push(inType+' '+input.name+' = To<'+inType+'>(info['+index+']).FromJust();');
         break;
       default:
-        unsupported(input.type);
+        throw Error("unsupported type");
     }
+    externParams.push(input.name);
   });
   switch(func.output) {
     case "c_int":
+    case "bool":
       v8ReturnValue = "info.GetReturnValue().Set(result);"
-      returnType = "int";
       break;
     default:
-      unsupported(func.output);
+      throw Error("unsupported type");
   }
   out += "NAN_METHOD("+func.name+") {"+os.EOL;
   out += "  "+inputs.join(os.EOL+"  ")+os.EOL;
-  out += "  "+returnType+" result = "+func.name+"("+externParams.join(", ")+");"+os.EOL;
+  out += "  "+mapToCType(func.output)+" result = "+func.name+"("+externParams.join(", ")+");"+os.EOL;
   out += "  "+v8ReturnValue+os.EOL;
   out += "}"
   return out;
@@ -99,8 +97,8 @@ function createNanMethod (func) {
 
 function createNanInit (func) {
   var out = "";
-  out += 'Nan::Set(target, New("'+func.name+'").ToLocalChecked(),';
-  out += ' Nan::GetFunction(New<FunctionTemplate>('+func.name+')).ToLocalChecked());';
+  out += '  Nan::Set(target, New("'+func.name+'").ToLocalChecked(),';
+  out += '    Nan::GetFunction(New<FunctionTemplate>('+func.name+')).ToLocalChecked());';
   return out;
 }
 
