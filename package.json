@@ -1,0 +1,15 @@
+{
+  "name": "runo-bridge",
+  "version": "0.0.1",
+  "description": "Simple Rust to NodeJS bridge",
+  "main": "runo-bridge.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andrew Kondratev <andrew@kondratev.pro>",
+  "keywords": [
+    "Rust",
+    "NodeJS"
+  ],
+  "license": "ISC"
+}
