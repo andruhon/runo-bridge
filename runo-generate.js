@@ -1,8 +1,5 @@
 var fs = require("fs");
-var path = require("path");
 var os = require("os");
-var input = require("./rust-input");
-
 
 console.log("preparing addon С++ template");
 /**
@@ -15,10 +12,10 @@ console.log("preparing addon С++ template");
  */
 var allowedTypes = [
   /* some primitives from Rust's libc */
-  "c_double", //JS number
+  //"c_double", //JS number
   "c_int", //JS number
   "bool", // JS boolean
-  "void"
+  //"void"
 
   /* pointers */
   // "pointer_c_char", //JS String
@@ -37,8 +34,6 @@ var allowedTypes = [
 //MDP primitives pointers and structs
 //Release everything from above + parse rust entry point code
 
-var template = fs.readFileSync(path.join(__dirname,"templates/addon.cc"),"utf8");
-
 var extern_c_functions = [];
 var nan_methods = [];
 var nan_inits = [];
@@ -52,11 +47,13 @@ function createExternDefinition (func) {
   var out = "";
   func.inputs.forEach(function(input){
     if (allowedTypes.indexOf(input.type)<0) {
+      console.log(input.type);
       throw Error("unsupported type");
     }
     inputs.push(mapToCType(input.type)+" "+input.name)
   });
   if (allowedTypes.indexOf(func.output)<0) {
+    console.log(input.type);
     throw Error("unsupported type");
   }
   return '  extern "C" '+mapToCType(func.output)+ ' '+func.name + '('+ inputs.join(", ") +');';
@@ -75,6 +72,7 @@ function createNanMethod (func) {
         inputs.push(inType+' '+input.name+' = To<'+inType+'>(info['+index+']).FromJust();');
         break;
       default:
+        console.log(input.type);
         throw Error("unsupported type");
     }
     externParams.push(input.name);
@@ -85,6 +83,7 @@ function createNanMethod (func) {
       v8ReturnValue = "info.GetReturnValue().Set(result);"
       break;
     default:
+      console.log(input.type);
       throw Error("unsupported type");
   }
   out += "NAN_METHOD("+func.name+") {"+os.EOL;
@@ -102,15 +101,17 @@ function createNanInit (func) {
   return out;
 }
 
-input.functions.forEach(function(func){
-  extern_c_functions.push(createExternDefinition(func));
-  nan_methods.push(createNanMethod(func));
-  nan_inits.push(createNanInit(func));
-});
+module.exports = function(template, outputPath, functions) {
+  functions.functions.forEach(function(func){
+    extern_c_functions.push(createExternDefinition(func));
+    nan_methods.push(createNanMethod(func));
+    nan_inits.push(createNanInit(func));
+  });
 
-var output = template.replace("{{extern_c_functions}}",extern_c_functions.join(os.EOL))
-  .replace("{{nan_methods}}",nan_methods.join(os.EOL))
-  .replace("{{nan_inits}}",nan_inits.join(os.EOL));
+  var output = template.replace("{{extern_c_functions}}",extern_c_functions.join(os.EOL))
+    .replace("{{nan_methods}}",nan_methods.join(os.EOL))
+    .replace("{{nan_inits}}",nan_inits.join(os.EOL));
 
-fs.writeFileSync("src/addon.cc", output);
-console.log("addon C++ template preparation successfully done.");
+  fs.writeFileSync(outputPath, output);
+  console.log("addon C++ template preparation successfully done.");
+};

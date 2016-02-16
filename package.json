@@ -1,8 +1,8 @@
 {
   "name": "runo-bridge",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Simple Rust to NodeJS bridge",
-  "main": "runo-bridge.js",
+  "main": "cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
