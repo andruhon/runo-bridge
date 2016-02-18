@@ -14,14 +14,14 @@ var allowedTypes = [
   /* some primitives from Rust's libc */
   //"c_double", //JS number
   "c_int", //JS number
-  "bool", // JS boolean
+  "bool" // JS boolean
   //"void"
 
   /* pointers */
-  // "pointer_c_char", //JS String
-  // "pointer_c_double", //JS number array
-  // "pointer_c_int_number", //JS number array
-  // "pointer_pointer_c_char", //JS string array
+  // "*c_char", //JS String
+  // "*c_double", //JS number array
+  // "*int_number", //JS number array
+  // "**c_char", //JS string array
   //
   // /**
   //   * struct with combination of things above

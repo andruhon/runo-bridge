@@ -5,7 +5,7 @@ const readline = require('readline');
 
 var noManglePattern = '#[no_mangle]';
 var fnDefPattern = 'pub extern "C" fn ';
-var fnSigPattern = "(\\w+)\\s*\\((.*)\\)\\s*->\\s*(\\w*)";
+var fnSigPattern = "(\\w+)\\s*\\((.*)\\)\\s*(->)?\\s*(\\w*)";
 
 var parseFunc = function(fnDef) {
   var fnSig = fnDef.substr(fnDefPattern.length)
@@ -17,12 +17,18 @@ var parseFunc = function(fnDef) {
   }
   var inputs = parsed[2].split(",").map(function(v){
       var input = v.split(":");
-      return {name: input[0].trim(), type: input[1].trim()};
+      console.log(input[1].replace(/(const|mut)/,"").replace(/\s*/g,""));
+      return {name: input[0].trim(), type: input[1].replace(/(const|mut)*/g,"").replace(/\s*/g,"")};
   });
+  if (parsed[4]) {
+    var output = parsed[4].replace(/(const|mut)/,"").replace(/\s*/g,"")
+  } else {
+    var output = "void";
+  }
   return {
     name: parsed[1],
     inputs: inputs,
-    output: parsed[3]
+    output: output
   }
 }
 
