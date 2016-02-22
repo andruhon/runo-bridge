@@ -28,6 +28,7 @@ using Nan::To;
 
 /* extern interface for Rust functions */
 extern "C" {
+  void* rs_drop(void* input);
 {{extern_c_functions}}
 }
 

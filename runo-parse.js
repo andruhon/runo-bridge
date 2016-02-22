@@ -5,11 +5,12 @@ const readline = require('readline');
 
 var noManglePattern = '#[no_mangle]';
 var fnDefPattern = 'pub extern "C" fn ';
-var fnSigPattern = "(\\w+)\\s*\\((.*)\\)\\s*(->)?\\s*(\\w*)";
+var fnSigPattern = "(\\w+)\\s*\\((.*)\\)\\s*(->)?\\s*((\\*\\w*\\s*)?\\w*)";
 
 var parseFunc = function(fnDef) {
   var fnSig = fnDef.substr(fnDefPattern.length)
   var fnSigRegex = new RegExp(fnSigPattern, "g");
+  console.log(fnSig);
   var parsed = fnSigRegex.exec(fnSig);
   if (!parsed) {
     console.error("can't parse "+fnSig);
@@ -23,6 +24,7 @@ var parseFunc = function(fnDef) {
   if (parsed[4]) {
     var output = parsed[4].replace(/(const|mut)/,"").replace(/\s*/g,"")
   } else {
+    console.log(parsed);
     var output = "void";
   }
   return {

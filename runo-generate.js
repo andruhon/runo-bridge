@@ -14,11 +14,11 @@ var allowedTypes = [
   /* some primitives from Rust's libc */
   //"c_double", //JS number
   "c_int", //JS number
-  "bool" // JS boolean
-  //"void"
+  "bool", // JS boolean
+  "void",
 
   /* pointers */
-  // "*c_char", //JS String
+  "*c_char", //JS String
   // "*c_double", //JS number array
   // "*int_number", //JS number array
   // "**c_char", //JS string array
@@ -39,7 +39,13 @@ var nan_methods = [];
 var nan_inits = [];
 
 function mapToCType(type) {
-  return type.replace("c_","");
+  switch (type) {
+    case "*c_char":
+      return "char *";
+      break;
+    default:
+      return type.replace("c_","");
+  }
 }
 
 function createExternDefinition (func) {
@@ -53,11 +59,13 @@ function createExternDefinition (func) {
     inputs.push(mapToCType(input.type)+" "+input.name)
   });
   if (allowedTypes.indexOf(func.output)<0) {
-    console.log(input.type);
+    console.log(func);
     throw Error("unsupported type");
   }
   return '  extern "C" '+mapToCType(func.output)+ ' '+func.name + '('+ inputs.join(", ") +');';
 }
+
+/* TODO: switch to babel or typescript with proper templates otb */
 
 function createNanMethod (func) {
   var inputs = [];
@@ -65,11 +73,19 @@ function createNanMethod (func) {
   var v8ReturnValue;
   var out = "";
   func.inputs.forEach(function(input, index){
+    var inType = mapToCType(input.type);
     switch (input.type) {
       case "c_int":
       case "bool":
-        var inType = mapToCType(input.type);
         inputs.push(inType+' '+input.name+' = To<'+inType+'>(info['+index+']).FromJust();');
+        break;
+      case "*c_char":
+        var i  = "Nan::HandleScope scope;"+os.EOL;
+            i += "  "+"String::Utf8Value cmd_"+input.name+"(info["+index+"]);"+os.EOL;
+            i += "  "+"string s_"+input.name+" = string(*cmd_"+input.name+");"+os.EOL;
+            i += "  "+"char *"+input.name+" = new char[s_"+input.name+".length() + 1];"+os.EOL;
+            i += "  "+"strcpy("+input.name+", s_"+input.name+".c_str());"+os.EOL;
+        inputs.push(i);
         break;
       default:
         console.log(input.type);
@@ -82,8 +98,14 @@ function createNanMethod (func) {
     case "bool":
       v8ReturnValue = "info.GetReturnValue().Set(result);"
       break;
+    case "*c_char":
+      v8ReturnValue = "info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());"+os.EOL;
+      v8ReturnValue += "  "+"rs_drop(result);";
+      break;
+    case "void":
+      break;
     default:
-      console.log(input.type);
+      console.log(func);
       throw Error("unsupported type");
   }
   out += "NAN_METHOD("+func.name+") {"+os.EOL;
