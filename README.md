@@ -1,6 +1,6 @@
 #RuNo bridge Simple Rust to NodeJS bridge
 
-WIP.
+WIP. Making a proper cli
 
 Prototype generating C++ boilerplate NodeJS addon wrapper for simple Rust library.
 
