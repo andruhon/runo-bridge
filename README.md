@@ -6,7 +6,7 @@ Prototype generating C++ boilerplate NodeJS addon wrapper for simple Rust librar
 
 See https://github.com/andruhon/runo-bridge for usage example
 
-Only `int` and `bool` and 'string' as params and outputs at the moment.
+Only `int` and `bool` and `string` as params and outputs at the moment.
 
 ##Motivation
 
