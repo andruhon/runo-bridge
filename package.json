@@ -17,5 +17,8 @@
     "retyped-es6-promise-tsd-ambient": "0.0.0-0",
     "retyped-node-tsd-ambient": "^1.5.3-0",
     "typescript": "^1.8.2"
+  },
+  "dependencies": {
+    "commander": "^2.9.0"
   }
 }
