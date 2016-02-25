@@ -1,13 +1,51 @@
+var parser = require("./dist/Parser.js");
+var generator = require("./dist/Generator.js");
 var fs = require("fs");
 var path = require("path");
+var program = require('commander');
 
-var parse = require('./runo-parse.js');
-var generate = require('./runo-generate.js');
+var defaultTemplate =path.join(__dirname,"templates","addon.cc");
 
-var rustSourcePath = path.resolve(path.join("src/embed.rs"));
-var cppTemplate = fs.readFileSync(path.join(__dirname,"templates/addon.cc"),"utf8");
-var outputPath = path.resolve("src/addon.cc");
+program
+  .version('0.0.1');
 
-parse(rustSourcePath, function(functions){
-  generate(cppTemplate, outputPath, functions);
-});
+
+program
+  .command('generate <input> <output>')
+  .description('generate C++ addon from Rust or JSON input')
+  .action(function(input, output) {
+    console.log("generating from "+input);
+    var template = fs.readFileSync(defaultTemplate, 'utf8');
+    var extname = path.extname(input);
+    var p;
+    new Promise(function(resolve, reject){
+      fs.stat(input, function(err, stats){
+        if (err || !stats.isFile()) {
+          reject("File does not exist or not readible");
+        } else {
+          resolve()
+        }
+      })
+    }).then(function(){
+      return new Promise(function(resolve, reject){
+        switch (extname) {
+          case ".json":
+            resolve(JSON.parse(fs.readFileSync(input, 'utf8')));
+            break;
+          case ".rs":
+            (new parser.Parser(fs.createReadStream(input), path.basename(input,extname))).parse().then(resolve);
+            break;
+          default:
+            reject("Unexpected input file extension, need .json or .rs");
+        }
+      })
+    }).then(function(inputVal){
+      var result = (new generator.Generator(inputVal, template)).generate();
+      fs.writeFileSync(output,result,'utf8');
+      console.log("wrote content to "+output);
+    }).catch(function(reason){
+      console.error(reason);
+    });
+  });
+
+program.parse(process.argv);

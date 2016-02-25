@@ -1,15 +1,24 @@
 {
   "name": "runo-bridge",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Simple Rust to NodeJS bridge",
   "main": "cli.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "postinstall": "npm run build"
   },
   "author": "Andrew Kondratev <andrew@kondratev.pro>",
   "keywords": [
     "Rust",
     "NodeJS"
   ],
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "retyped-node-tsd-ambient": "^1.5.3-0",
+    "typescript": "^1.8.2"
+  },
+  "dependencies": {
+    "commander": "^2.9.0"
+  }
 }
