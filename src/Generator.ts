@@ -1,16 +1,7 @@
 import * as os from 'os';
 import * as fs from 'fs';
+import {IInterfaceDefinition, IFunctionDefinition} from './interfaces/IABIInterface';
 
-export interface GeneratorFunction {
-  name: string;
-  inputs: {name: string, type: string}[];
-  output: string;
-}
-
-export interface GeneratorInput {
-  module_name: string;
-  functions: GeneratorFunction[];
-}
 
 export class Generator {
 
@@ -41,9 +32,9 @@ export class Generator {
   protected nan_methods = [];
   protected nan_inits = [];
 
-  constructor(protected input: GeneratorInput, protected template: string) {}
+  constructor(protected input: IInterfaceDefinition, protected template: string) {}
 
-  protected createExternDefinition (func:GeneratorFunction): string {
+  protected createExternDefinition (func:IFunctionDefinition): string {
     let inputs = [];
     let out = "";
     func.inputs.forEach(function(input){
@@ -62,7 +53,7 @@ export class Generator {
 
   /* TODO: switch to babel or typescript with proper templates otb */
 
-  protected createNanMethod (func:GeneratorFunction): string {
+  protected createNanMethod (func:IFunctionDefinition): string {
     let inputs = [];
     let externParams = [];
     let v8ReturnValue;
@@ -111,7 +102,7 @@ export class Generator {
     return out;
   }
 
-  protected createNanInit (func:GeneratorFunction): string {
+  protected createNanInit (func: IFunctionDefinition): string {
     let out = "";
     out += '  Nan::Set(target, New("'+func.name+'").ToLocalChecked(),';
     out += '    Nan::GetFunction(New<FunctionTemplate>('+func.name+')).ToLocalChecked());';
@@ -125,7 +116,6 @@ export class Generator {
       this.nan_inits.push(this.createNanInit(func));
     });
 
-    console.log(this.template);
     let output = this.template.replace("{{extern_c_functions}}",this.extern_c_functions.join(os.EOL))
       .replace("{{nan_methods}}",this.nan_methods.join(os.EOL))
       .replace("{{nan_inits}}",this.nan_inits.join(os.EOL));
