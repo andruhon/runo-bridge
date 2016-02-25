@@ -86,7 +86,7 @@ export class Generator {
         break;
       case "*c_char":
         v8ReturnValue = "info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());"+os.EOL;
-        v8ReturnValue += "  "+"rs_drop(result);";
+        v8ReturnValue += "  "+"free(result);";
         break;
       case "void":
         break;
