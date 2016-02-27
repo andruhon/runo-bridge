@@ -16,13 +16,13 @@ Only `int` and `bool` and `string` as params and outputs at the moment.
 
 Generate V8 addon C++ code from Rust source source.rs `runo-bridge <source> <output>`:
 
-    runo-bridge source.rs addon.cc
+    runo-bridge generate source.rs addon.cc
 
 RuNo will look for `no-manlge` `extern "C"` functions and will generate NodeJS addon boilerplate for them.
 
 It is also possible to provide library binary interface definition as a JSON:
 
-    runo-bridge my-interface.json addon.cc
+    runo-bridge generate my-interface.json addon.cc
 
 JSON format is:
 
