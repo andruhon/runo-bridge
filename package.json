@@ -1,12 +1,12 @@
 {
   "name": "runo-bridge",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Simple Rust to NodeJS bridge",
-  "main": "cli.js",
+  "main": "bin/runo-bridge.js",
+  "bin": "bin/runo-bridge.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "postinstall": "npm run build"
+    "build": "tsc"
   },
   "author": "Andrew Kondratev <andrew@kondratev.pro>",
   "keywords": [

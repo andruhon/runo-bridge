@@ -1,10 +1,14 @@
-var parser = require("./dist/Parser.js");
-var generator = require("./dist/Generator.js");
+#!/usr/bin/env node
+
+process.title = 'runo-bridge';
+
+var parser = require("../dist/Parser.js");
+var generator = require("../dist/Generator.js");
 var fs = require("fs");
 var path = require("path");
 var program = require('commander');
 
-var defaultTemplate =path.join(__dirname,"templates","addon.cc");
+var defaultTemplate =path.join(__dirname,"..","templates","addon.cc");
 
 program
   .version('0.0.1');
