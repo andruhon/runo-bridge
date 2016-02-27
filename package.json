@@ -1,6 +1,6 @@
 {
   "name": "runo-bridge",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Simple Rust to NodeJS bridge",
   "main": "bin/runo-bridge.js",
   "bin": "bin/runo-bridge.js",
