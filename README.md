@@ -6,17 +6,23 @@ Prototype generating C++ boilerplate NodeJS addon wrapper for simple Rust librar
 
 Only `int` and `bool` and `string` as params and outputs at the moment.
 
+##installation
+
+    npm install runo-bridge -g
+
+* global option used here for simplisity, however it is better to install it locally and run it as local npm binary.
+
 ##usage
 
 Generate V8 addon C++ code from Rust source source.rs `runo-bridge <source> <output>`:
 
-  runo-bridge source.rs addon.cc
+    runo-bridge source.rs addon.cc
 
 RuNo will look for `no-manlge` `extern "C"` functions and will generate NodeJS addon boilerplate for them.
 
 It is also possible to provide library binary interface definition as a JSON:
 
-  runo-bridge my-interface.json addon.cc
+    runo-bridge my-interface.json addon.cc
 
 JSON format is:
 
