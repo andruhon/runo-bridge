@@ -9,49 +9,49 @@ var Generator = (function () {
         this.nan_inits = [];
     }
     Generator.prototype.createExternDefinition = function (func) {
-        var inputs = [];
+        var parameters = [];
         var out = "";
-        func.inputs.forEach(function (input) {
-            if (Generator.allowedTypes.indexOf(input.type) < 0) {
-                console.log(input.type);
+        func.parameters.forEach(function (param) {
+            if (Generator.allowedTypes.indexOf(param.type) < 0) {
+                console.log(param.type);
                 throw Error("unsupported type");
             }
-            inputs.push(Generator.mapToCType(input.type) + " " + input.name);
+            parameters.push(Generator.mapToCType(param.type) + " " + param.name);
         });
-        if (Generator.allowedTypes.indexOf(func.output) < 0) {
+        if (Generator.allowedTypes.indexOf(func.return) < 0) {
             console.log(func);
             throw Error("unsupported type");
         }
-        return '  extern "C" ' + Generator.mapToCType(func.output) + ' ' + func.name + '(' + inputs.join(", ") + ');';
+        return '  extern "C" ' + Generator.mapToCType(func.return) + ' ' + func.name + '(' + parameters.join(", ") + ');';
     };
     /* TODO: switch to babel or typescript with proper templates otb */
     Generator.prototype.createNanMethod = function (func) {
-        var inputs = [];
+        var parameters = [];
         var externParams = [];
         var v8ReturnValue;
         var out = "";
-        func.inputs.forEach(function (input, index) {
-            var inType = Generator.mapToCType(input.type);
-            switch (input.type) {
+        func.parameters.forEach(function (param, index) {
+            var inType = Generator.mapToCType(param.type);
+            switch (param.type) {
                 case "c_int":
                 case "bool":
-                    inputs.push(inType + ' ' + input.name + ' = To<' + inType + '>(info[' + index + ']).FromJust();');
+                    parameters.push(inType + ' ' + param.name + ' = To<' + inType + '>(info[' + index + ']).FromJust();');
                     break;
                 case "*c_char":
                     var i = "Nan::HandleScope scope;" + os.EOL;
-                    i += "  " + "String::Utf8Value cmd_" + input.name + "(info[" + index + "]);" + os.EOL;
-                    i += "  " + "string s_" + input.name + " = string(*cmd_" + input.name + ");" + os.EOL;
-                    i += "  " + "char *" + input.name + " = new char[s_" + input.name + ".length() + 1];" + os.EOL;
-                    i += "  " + "strcpy(" + input.name + ", s_" + input.name + ".c_str());" + os.EOL;
-                    inputs.push(i);
+                    i += "  " + "String::Utf8Value cmd_" + param.name + "(info[" + index + "]);" + os.EOL;
+                    i += "  " + "string s_" + param.name + " = string(*cmd_" + param.name + ");" + os.EOL;
+                    i += "  " + "char *" + param.name + " = new char[s_" + param.name + ".length() + 1];" + os.EOL;
+                    i += "  " + "strcpy(" + param.name + ", s_" + param.name + ".c_str());" + os.EOL;
+                    parameters.push(i);
                     break;
                 default:
-                    console.log(input.type);
+                    console.log(param.type);
                     throw Error("unsupported type");
             }
-            externParams.push(input.name);
+            externParams.push(param.name);
         });
-        switch (func.output) {
+        switch (func.return) {
             case "c_int":
             case "bool":
                 v8ReturnValue = "info.GetReturnValue().Set(result);";
@@ -67,8 +67,8 @@ var Generator = (function () {
                 throw Error("unsupported type");
         }
         out += "NAN_METHOD(" + func.name + ") {" + os.EOL;
-        out += "  " + inputs.join(os.EOL + "  ") + os.EOL;
-        out += "  " + Generator.mapToCType(func.output) + " result = " + func.name + "(" + externParams.join(", ") + ");" + os.EOL;
+        out += "  " + parameters.join(os.EOL + "  ") + os.EOL;
+        out += "  " + Generator.mapToCType(func.return) + " result = " + func.name + "(" + externParams.join(", ") + ");" + os.EOL;
         out += "  " + v8ReturnValue + os.EOL;
         out += "}";
         return out;

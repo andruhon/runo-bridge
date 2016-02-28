@@ -1,7 +1,7 @@
 export interface IFunctionDefinition {
   name: string;
-  inputs: {name: string, type: string}[];
-  output: string;
+  parameters: {name: string, type: string}[];
+  return: string;
 }
 
 export interface IInterfaceDefinition {

@@ -32,10 +32,10 @@ export class Parser {
       console.error("can't parse "+fnSig);
       return;
     }
-    var inputs = parsed[2].split(",").map(function(v){
-        var input = v.split(":");
-        console.log(input[1].replace(/(const|mut)/,"").replace(/\s*/g,""));
-        return {name: input[0].trim(), type: input[1].replace(/(const|mut)*/g,"").replace(/\s*/g,"")};
+    var parameters = parsed[2].split(",").map(function(v){
+        var param = v.split(":");
+        console.log(param[1].replace(/(const|mut)/,"").replace(/\s*/g,""));
+        return {name: param[0].trim(), type: param[1].replace(/(const|mut)*/g,"").replace(/\s*/g,"")};
     });
     if (parsed[4]) {
       var output = parsed[4].replace(/(const|mut)/,"").replace(/\s*/g,"")
@@ -45,8 +45,8 @@ export class Parser {
     }
     return {
       name: parsed[1],
-      inputs: inputs,
-      output: output
+      parameters: parameters,
+      return: output
     }
   }
 

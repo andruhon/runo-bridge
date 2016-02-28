@@ -3,33 +3,33 @@
   "functions": [
     {
       "name": "int_in_int_out",
-      "inputs": [
+      "parameters": [
         {
           "name": "input",
           "type": "c_int"
         }
       ],
-      "output": "c_int"
+      "return": "c_int"
     },
     {
       "name": "is_greather_than_42",
-      "inputs": [
+      "parameters": [
         {
           "name": "input",
           "type": "c_int"
         }
       ],
-      "output": "bool"
+      "return": "bool"
     },
     {
       "name": "get_42",
-      "inputs": [
+      "parameters": [
         {
           "name": "input",
           "type": "bool"
         }
       ],
-      "output": "c_int"
+      "return": "c_int"
     }
   ]
 }
