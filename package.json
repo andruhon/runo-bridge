@@ -1,7 +1,11 @@
 {
   "name": "runo-bridge",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Simple Rust to NodeJS bridge",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andruhon/runo-bridge"
+  },
   "main": "bin/runo-bridge.js",
   "bin": "bin/runo-bridge.js",
   "scripts": {
