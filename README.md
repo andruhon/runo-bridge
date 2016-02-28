@@ -6,6 +6,11 @@ Prototype generating C++ boilerplate NodeJS addon wrapper for simple Rust librar
 
 Only `int` and `bool` and `string` as params and outputs at the moment.
 
+##important
+This package itself does not need Rust or C++ with node-gyp, it just emits a C++ source file.
+
+However in order to build this source code, your rust and C++ compiler should be compatible with your NodeJS. It is **particularly important on Windows**, where Rust target should be MSVC not GNU, unless you building your NodeJS for Windows from source with GCC. For example, if one using **32 bit** NodeJS on Windows this one should use target `i686-pc-windows-msvc`, if **64 bit** Node then Rust should be configured with `x86_64-pc-windows-msvc` compile target. The same about C++: Everything is mostrly smooth on platforms with GCC, and a bit painful with MS Visual C++, please refer to [node-gyp installation instructions](https://github.com/nodejs/node-gyp) for details.
+
 ##installation
 
     npm install runo-bridge -g
@@ -32,7 +37,7 @@ JSON format is:
   "functions": [
     {
       "name": "add",
-      "inputs": [
+      "parameters": [
         {
           "name": "arg1",
           "type": "c_int"
@@ -42,7 +47,7 @@ JSON format is:
           "type": "c_int"
         }
       ],
-      "output": "c_int"
+      "return": "c_int"
     },
     ...
   ]
