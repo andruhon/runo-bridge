@@ -4,7 +4,7 @@ Prototype generating C++ boilerplate NodeJS addon wrapper for simple Rust librar
 
 **Use on your own risk!**
 
-Only `int` and `bool` and `string` as params and outputs at the moment.
+Only `int`, `float`/`double` and `bool` and `string` as params and outputs at the moment.
 
 ##important
 This package itself does not need Rust or C++ with node-gyp, it just emits a C++ source file.

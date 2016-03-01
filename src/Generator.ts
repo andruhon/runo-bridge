@@ -2,6 +2,8 @@ import * as os from 'os';
 import * as fs from 'fs';
 import {IInterfaceDefinition, IFunctionDefinition} from './interfaces/IABIInterface';
 
+const UNSUPPORTED_TYPE = "unsupported type";
+const WARN_FLOAT = "v8 alwayse use c_double internally, c_float might lead to precision loose";
 
 export class Generator {
 
@@ -12,6 +14,8 @@ export class Generator {
     /* some primitives from Rust's libc */
     //"c_double", //JS number
     "c_int", //JS number
+    "c_float", //JS float
+    "c_double", //JS float
     "bool", // JS boolean
     "void",
 
@@ -39,14 +43,14 @@ export class Generator {
     let out = "";
     func.parameters.forEach(function(param){
       if (Generator.allowedTypes.indexOf(param.type)<0) {
-        console.log(param.type);
-        throw Error("unsupported type");
+        console.error(param.type);
+        throw Error(UNSUPPORTED_TYPE);
       }
       parameters.push(Generator.mapToCType(param.type)+" "+param.name)
     });
     if (Generator.allowedTypes.indexOf(func.return)<0) {
-      console.log(func);
-      throw Error("unsupported type");
+      console.error(func);
+      throw Error(UNSUPPORTED_TYPE);
     }
     return '  extern "C" '+Generator.mapToCType(func.return)+ ' '+func.name + '('+ parameters.join(", ") +');';
   }
@@ -62,7 +66,13 @@ export class Generator {
       let inType = Generator.mapToCType(param.type);
       switch (param.type) {
         case "c_int":
+        case "c_double":
+        case "c_float":
         case "bool":
+          if (param.type=="c_float") {
+            console.warn(WARN_FLOAT);
+            inType = "double";
+          }
           parameters.push(inType+' '+param.name+' = To<'+inType+'>(info['+index+']).FromJust();');
           break;
         case "*c_char":
@@ -74,13 +84,15 @@ export class Generator {
           parameters.push(i);
           break;
         default:
-          console.log(param.type);
-          throw Error("unsupported type");
+          console.error(param.type);
+          throw Error(UNSUPPORTED_TYPE);
       }
       externParams.push(param.name);
     });
     switch(func.return) {
       case "c_int":
+      case "c_double":
+      case "c_float":
       case "bool":
         v8ReturnValue = "info.GetReturnValue().Set(result);"
         break;
@@ -91,8 +103,8 @@ export class Generator {
       case "void":
         break;
       default:
-        console.log(func);
-        throw Error("unsupported type");
+        console.error(func);
+        throw Error(UNSUPPORTED_TYPE);
     }
     out += "NAN_METHOD("+func.name+") {"+os.EOL;
     out += "  "+parameters.join(os.EOL+"  ")+os.EOL;
