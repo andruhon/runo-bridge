@@ -21,9 +21,11 @@
   "devDependencies": {
     "mocha": "^2.4.5",
     "retyped-node-tsd-ambient": "^1.5.3-0",
+    "retyped-prettyjson-tsd-ambient": "0.0.0-0",
     "typescript": "^1.8.2"
   },
   "dependencies": {
-    "commander": "^2.9.0"
+    "commander": "^2.9.0",
+    "prettyjson": "^1.1.3"
   }
 }

@@ -3,6 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as readline from 'readline';
 import {Log, LOGLEV} from './Log';
+import * as prettyjson from 'prettyjson';
 
 import {IInterfaceDefinition, IFunctionDefinition} from './interfaces/IABIInterface';
 
@@ -82,8 +83,8 @@ export class Parser {
       }
     });
     rl.on('close',function(){
-        l.log("found following extern functions:");
-        l.log(JSON.stringify(results,null,"  "));
+        l.log("Parse result:");
+        l.wrapped(results, prettyjson.render);
       resolve(results);
     });
   }

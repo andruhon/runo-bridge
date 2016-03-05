@@ -27,6 +27,11 @@ var Log = (function () {
         if (this.level >= LOGLEV.DEBUG)
             console.log(msg);
     };
+    Log.prototype.wrapped = function (msg, wrapper, level) {
+        if (level === void 0) { level = LOGLEV.INF; }
+        if (this.level >= level)
+            console.log(wrapper(msg));
+    };
     return Log;
 }());
 exports.Log = Log;

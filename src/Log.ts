@@ -22,4 +22,8 @@ export class Log {
     if(this.level>=LOGLEV.DEBUG) console.log(msg);
   }
 
+  public wrapped(msg: any, wrapper: (any)=>any, level: LOGLEV = LOGLEV.INF) {
+    if(this.level>=level) console.log(wrapper(msg));
+  }
+
 }

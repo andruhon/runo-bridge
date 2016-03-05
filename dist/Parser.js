@@ -2,6 +2,7 @@
 var path = require('path');
 var readline = require('readline');
 var Log_1 = require('./Log');
+var prettyjson = require('prettyjson');
 var l = new Log_1.Log();
 var Parser = (function () {
     function Parser(source, name, settings) {
@@ -45,8 +46,8 @@ var Parser = (function () {
                 }
             });
             rl.on('close', function () {
-                l.log("found following extern functions:");
-                l.log(JSON.stringify(results, null, "  "));
+                l.log("Parse result:");
+                l.wrapped(results, prettyjson.render);
                 resolve(results);
             });
         };
