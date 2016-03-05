@@ -1,6 +1,10 @@
 import * as os from 'os';
 import * as fs from 'fs';
+import {Log, LOGLEV} from './Log';
+
 import {IInterfaceDefinition, IFunctionDefinition} from './interfaces/IABIInterface';
+
+const l = new Log(LOGLEV.ERR);
 
 const UNSUPPORTED_TYPE = "unsupported type";
 const WARN_FLOAT = "v8 alwayse use c_double internally, c_float might lead to precision loose";
@@ -43,13 +47,13 @@ export class Generator {
     let out = "";
     func.parameters.forEach(function(param){
       if (Generator.allowedTypes.indexOf(param.type)<0) {
-        console.error(param.type);
+        l.err(param.type+" param "+param.type);
         throw Error(UNSUPPORTED_TYPE);
       }
       parameters.push(Generator.mapToCType(param.type)+" "+param.name)
     });
     if (Generator.allowedTypes.indexOf(func.return)<0) {
-      console.error(func);
+      l.err(func.name+" returns "+func.return);
       throw Error(UNSUPPORTED_TYPE);
     }
     return '  extern "C" '+Generator.mapToCType(func.return)+ ' '+func.name + '('+ parameters.join(", ") +');';
@@ -70,7 +74,7 @@ export class Generator {
         case "c_float":
         case "bool":
           if (param.type=="c_float") {
-            console.warn(WARN_FLOAT);
+            l.warn(WARN_FLOAT);
             inType = "double";
           }
           parameters.push(inType+' '+param.name+' = To<'+inType+'>(info['+index+']).FromJust();');
@@ -84,7 +88,7 @@ export class Generator {
           parameters.push(i);
           break;
         default:
-          console.error(param.type);
+          l.err(param.name + " param "+ param.type);
           throw Error(UNSUPPORTED_TYPE);
       }
       externParams.push(param.name);
@@ -103,7 +107,7 @@ export class Generator {
       case "void":
         break;
       default:
-        console.error(func);
+        l.err(func.name+" returns "+func.return);
         throw Error(UNSUPPORTED_TYPE);
     }
     out += "NAN_METHOD("+func.name+") {"+os.EOL;

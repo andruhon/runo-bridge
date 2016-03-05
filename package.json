@@ -9,7 +9,7 @@
   "main": "bin/runo-bridge.js",
   "bin": "bin/runo-bridge.js",
   "scripts": {
-    "test": "mocha",
+    "test": "npm run build && mocha",
     "build": "tsc"
   },
   "author": "Andrew Kondratev <andrew@kondratev.pro>",

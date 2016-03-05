@@ -1,4 +1,3 @@
-#![feature(const_fn)]
 extern crate libc;
 
 use libc::{c_int, c_float, c_double};

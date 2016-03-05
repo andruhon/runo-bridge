@@ -53,37 +53,37 @@ program
     });
   });
 
-  program
-    .command('parse <input>')
-    .description('parse Rust file and output JSON')
-    .action(function(input, output) {
-      var template = fs.readFileSync(defaultTemplate, 'utf8');
-      var extname = path.extname(input);
-      var p;
-      new Promise(function(resolve, reject){
-        fs.stat(input, function(err, stats){
-          if (err || !stats.isFile()) {
-            reject("File does not exist or not readible");
-          } else {
-            resolve()
-          }
-        })
-      }).then(function(){
-        return new Promise(function(resolve, reject){
-          switch (extname) {
-            case ".rs":
-              (new parser.Parser(fs.createReadStream(input), path.basename(input,extname), {verbosity: 1})).parse().then(resolve);
-              break;
-            default:
-              reject("Unexpected input file extension, need .json or .rs");
-          }
-        })
-      }).then(function(inputVal){
-        console.log(JSON.stringify(inputVal,null,'  '));
-      }).catch(function(reason){
-        console.error(reason);
-      });
+program
+  .command('parse <input>')
+  .description('parse Rust file and output JSON')
+  .action(function(input, output) {
+    var template = fs.readFileSync(defaultTemplate, 'utf8');
+    var extname = path.extname(input);
+    var p;
+    new Promise(function(resolve, reject){
+      fs.stat(input, function(err, stats){
+        if (err || !stats.isFile()) {
+          reject("File does not exist or not readible");
+        } else {
+          resolve()
+        }
+      })
+    }).then(function(){
+      return new Promise(function(resolve, reject){
+        switch (extname) {
+          case ".rs":
+            (new parser.Parser(fs.createReadStream(input), path.basename(input,extname), {verbosity: 1})).parse().then(resolve);
+            break;
+          default:
+            reject("Unexpected input file extension, need .json or .rs");
+        }
+      })
+    }).then(function(inputVal){
+      console.log(JSON.stringify(inputVal,null,'  '));
+    }).catch(function(reason){
+      console.error(reason);
     });
+  });
 
 program
   .command('*')

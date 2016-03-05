@@ -1,5 +1,5 @@
 {
-  "module_name": "embed.",
+  "module_name": "embed",
   "functions": [
     {
       "name": "int_in_int_out",
@@ -30,6 +30,20 @@
         }
       ],
       "return": "c_int"
+    },
+    {
+      "name": "double_multiply_plus2",
+      "parameters": [
+        {
+          "name": "in1",
+          "type": "c_double"
+        },
+        {
+          "name": "in2",
+          "type": "c_double"
+        }
+      ],
+      "return": "c_double"
     }
   ]
 }

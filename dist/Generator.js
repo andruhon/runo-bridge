@@ -1,5 +1,7 @@
 "use strict";
 var os = require('os');
+var Log_1 = require('./Log');
+var l = new Log_1.Log(Log_1.LOGLEV.ERR);
 var UNSUPPORTED_TYPE = "unsupported type";
 var WARN_FLOAT = "v8 alwayse use c_double internally, c_float might lead to precision loose";
 var Generator = (function () {
@@ -15,13 +17,13 @@ var Generator = (function () {
         var out = "";
         func.parameters.forEach(function (param) {
             if (Generator.allowedTypes.indexOf(param.type) < 0) {
-                console.error(param.type);
+                l.err(param.type + " param " + param.type);
                 throw Error(UNSUPPORTED_TYPE);
             }
             parameters.push(Generator.mapToCType(param.type) + " " + param.name);
         });
         if (Generator.allowedTypes.indexOf(func.return) < 0) {
-            console.error(func);
+            l.err(func.name + " returns " + func.return);
             throw Error(UNSUPPORTED_TYPE);
         }
         return '  extern "C" ' + Generator.mapToCType(func.return) + ' ' + func.name + '(' + parameters.join(", ") + ');';
@@ -40,7 +42,7 @@ var Generator = (function () {
                 case "c_float":
                 case "bool":
                     if (param.type == "c_float") {
-                        console.warn(WARN_FLOAT);
+                        l.warn(WARN_FLOAT);
                         inType = "double";
                     }
                     parameters.push(inType + ' ' + param.name + ' = To<' + inType + '>(info[' + index + ']).FromJust();');
@@ -54,7 +56,7 @@ var Generator = (function () {
                     parameters.push(i);
                     break;
                 default:
-                    console.error(param.type);
+                    l.err(param.name + " param " + param.type);
                     throw Error(UNSUPPORTED_TYPE);
             }
             externParams.push(param.name);
@@ -73,7 +75,7 @@ var Generator = (function () {
             case "void":
                 break;
             default:
-                console.error(func);
+                l.err(func.name + " returns " + func.return);
                 throw Error(UNSUPPORTED_TYPE);
         }
         out += "NAN_METHOD(" + func.name + ") {" + os.EOL;
