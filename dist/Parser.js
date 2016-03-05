@@ -1,6 +1,8 @@
 "use strict";
 var path = require('path');
 var readline = require('readline');
+var Log_1 = require('./Log');
+var l = new Log_1.Log();
 var Parser = (function () {
     function Parser(source, name, settings) {
         var _this = this;
@@ -9,7 +11,8 @@ var Parser = (function () {
         this.settings = {
             noManglePattern: '#[no_mangle]',
             fnDefPattern: 'pub extern "C" fn ',
-            fnSigPattern: '(\\w+)\\s*\\((.*)\\)\\s*(->)?\\s*((\\*\\w*\\s*)?\\w*)'
+            fnSigPattern: '(\\w+)\\s*\\((.*)\\)\\s*(->)?\\s*((\\*\\w*\\s*)?\\w*)',
+            verbosity: Log_1.LOGLEV.INF
         };
         this.parseInner = function (resolve, reject) {
             var rl = readline.createInterface({
@@ -31,7 +34,7 @@ var Parser = (function () {
                         }
                     }
                     else {
-                        console.error(s.noManglePattern + " is not followed by the line with" + s.fnDefPattern);
+                        l.err(s.noManglePattern + " is not followed by the line with" + s.fnDefPattern);
                     }
                 }
                 if (line.trim().startsWith(s.noManglePattern)) {
@@ -42,33 +45,31 @@ var Parser = (function () {
                 }
             });
             rl.on('close', function () {
-                console.log("found following extern functions:");
-                console.log(JSON.stringify(results, null, "  "));
+                l.log("found following extern functions:");
+                l.log(JSON.stringify(results, null, "  "));
                 resolve(results);
             });
         };
         if (settings)
             Object.assign(this.settings, settings); //mutate settings
+        l.level = this.settings.verbosity;
     }
     Parser.prototype.parseFunc = function (fnDef) {
         var fnSig = fnDef.substr(this.settings.fnDefPattern.length);
         var fnSigRegex = new RegExp(this.settings.fnSigPattern, "g");
-        console.log(fnSig);
         var parsed = fnSigRegex.exec(fnSig);
         if (!parsed) {
-            console.error("can't parse " + fnSig);
+            l.err("can't parse " + fnSig);
             return;
         }
         var parameters = parsed[2].split(",").map(function (v) {
             var param = v.split(":");
-            console.log(param[1].replace(/(const|mut)/, "").replace(/\s*/g, ""));
             return { name: param[0].trim(), type: param[1].replace(/(const|mut)*/g, "").replace(/\s*/g, "") };
         });
         if (parsed[4]) {
             var output = parsed[4].replace(/(const|mut)/, "").replace(/\s*/g, "");
         }
         else {
-            console.log(parsed);
             var output = "void";
         }
         return {

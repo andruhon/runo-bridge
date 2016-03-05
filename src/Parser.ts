@@ -2,13 +2,17 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as readline from 'readline';
+import {Log, LOGLEV} from './Log';
 
 import {IInterfaceDefinition, IFunctionDefinition} from './interfaces/IABIInterface';
+
+const l = new Log();
 
 export interface IParserSettings {
   noManglePattern: string,
   fnDefPattern: string,
-  fnSigPattern: string
+  fnSigPattern: string,
+  verbosity?: LOGLEV
 }
 
 export class Parser {
@@ -16,31 +20,30 @@ export class Parser {
   protected settings = {
     noManglePattern: '#[no_mangle]',
     fnDefPattern: 'pub extern "C" fn ',
-    fnSigPattern: '(\\w+)\\s*\\((.*)\\)\\s*(->)?\\s*((\\*\\w*\\s*)?\\w*)'
+    fnSigPattern: '(\\w+)\\s*\\((.*)\\)\\s*(->)?\\s*((\\*\\w*\\s*)?\\w*)',
+    verbosity: LOGLEV.INF
   }
 
   constructor(protected source: NodeJS.ReadableStream, protected name: string, settings?: IParserSettings) {
     if (settings) Object.assign(this.settings, settings); //mutate settings
+    l.level = this.settings.verbosity
   }
 
   protected parseFunc (fnDef: string): IFunctionDefinition {
     var fnSig = fnDef.substr(this.settings.fnDefPattern.length)
     var fnSigRegex = new RegExp(this.settings.fnSigPattern, "g");
-    console.log(fnSig);
     var parsed = fnSigRegex.exec(fnSig);
     if (!parsed) {
-      console.error("can't parse "+fnSig);
+      l.err("can't parse "+fnSig);
       return;
     }
     var parameters = parsed[2].split(",").map(function(v){
         var param = v.split(":");
-        console.log(param[1].replace(/(const|mut)/,"").replace(/\s*/g,""));
         return {name: param[0].trim(), type: param[1].replace(/(const|mut)*/g,"").replace(/\s*/g,"")};
     });
     if (parsed[4]) {
       var output = parsed[4].replace(/(const|mut)/,"").replace(/\s*/g,"")
     } else {
-      console.log(parsed);
       var output = "void";
     }
     return {
@@ -69,7 +72,7 @@ export class Parser {
             results.functions.push(fnParsed);
           }
         } else {
-          console.error(s.noManglePattern+" is not followed by the line with"+s.fnDefPattern);
+          l.err(s.noManglePattern+" is not followed by the line with"+s.fnDefPattern);
         }
       }
       if(line.trim().startsWith(s.noManglePattern)) {
@@ -79,8 +82,8 @@ export class Parser {
       }
     });
     rl.on('close',function(){
-      console.log("found following extern functions:");
-      console.log(JSON.stringify(results,null,"  "));
+        l.log("found following extern functions:");
+        l.log(JSON.stringify(results,null,"  "));
       resolve(results);
     });
   }
