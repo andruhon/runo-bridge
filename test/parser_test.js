@@ -6,7 +6,7 @@ var parser = require("../dist/Parser.js");
 
 var inputs = {
   'int': 'test/resources/int_to_int.rs',
-  'embed': 'test/resources/embed.rs'
+  'embed': 'test/resources/src/embed.rs'
 };
 
 describe('Parser', function() {
@@ -50,6 +50,15 @@ describe('Parser', function() {
         {"name":"int_in_int_out","parameters":[{"name":"input","type":"c_int"}],"return":"c_int"},
         {"name":"is_greather_than_42","parameters":[{"name":"input","type":"c_int"}],"return":"bool"},
         {"name":"get_42","parameters":[{"name":"input","type":"bool"}],"return":"c_int"},
+        {"name": "rs_experimental_string",
+            "parameters": [
+              {
+                "name": "s_raw",
+                "type": "*c_char"
+              }
+            ],
+            "return": "*c_char"
+        },
         {"name":"float_multiply_plus2","parameters":[{"name":"in1","type":"c_float"},
         {"name":"in2","type":"c_float"}],"return":"c_float"},
         {"name":"double_multiply_plus2","parameters":[{"name":"in1","type":"c_double"},

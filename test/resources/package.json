@@ -1,0 +1,11 @@
+{
+  "name": "runo-bridge-integration-test",
+  "version": "0.0.1",
+  "description": "Integration test",
+  "scripts": {
+    "preinstall": "node -v"
+  },
+  "dependencies": {
+    "nan": "^2.2.0"
+  }
+}

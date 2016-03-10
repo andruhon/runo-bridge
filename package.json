@@ -10,7 +10,17 @@
   "bin": "bin/runo-bridge.js",
   "scripts": {
     "test": "npm run build && mocha",
-    "build": "tsc"
+    "test-full": "npm run build && mocha && npm run int-test",
+    "build": "tsc",
+    "int-install-deps": "cd test/resources && npm install",
+    "int-generate-cc": "node bin/runo-bridge.js generate test/resources/src/embed.rs test/resources/src/addon.cc",
+    "int-build-rust": "cd test/resources && cargo build",
+    "int-clean": "cd test/resources && node build-scripts/clean.js",
+    "int-install-rust": "cd test/resources && node build-scripts/install-rust.js",
+    "int-build-addon": "npm run int-install-rust && cd test/resources && node-gyp configure -d && node-gyp build -d",
+    "int-run": "cd test/integration && mocha",
+    "int-test": "npm run int-clean && npm run int-install-deps && npm run int-test-short",
+    "int-test-short": "npm run int-generate-cc && npm run int-build-rust && npm run int-install-rust && npm run int-build-addon && npm run int-run"
   },
   "author": "Andrew Kondratev <andrew@kondratev.pro>",
   "keywords": [
@@ -22,7 +32,8 @@
     "mocha": "^2.4.5",
     "retyped-node-tsd-ambient": "^1.5.3-0",
     "retyped-prettyjson-tsd-ambient": "0.0.0-0",
-    "typescript": "^1.8.2"
+    "typescript": "^1.8.2",
+    "fs-extra": "^0.26.5"
   },
   "dependencies": {
     "commander": "^2.9.0",
