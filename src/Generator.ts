@@ -64,6 +64,7 @@ export class Generator {
   protected createNanMethod (func:IFunctionDefinition): string {
     let parameters = [];
     let externParams = [];
+    let deallocations = [];
     let v8ReturnValue;
     let out = "";
     func.parameters.forEach((param, index)=>{
@@ -83,9 +84,10 @@ export class Generator {
           let i  = "Nan::HandleScope scope;"+os.EOL;
               i += "  "+"String::Utf8Value cmd_"+param.name+"(info["+index+"]);"+os.EOL;
               i += "  "+"string s_"+param.name+" = string(*cmd_"+param.name+");"+os.EOL;
-              i += "  "+"char *"+param.name+" = new char[s_"+param.name+".length() + 1];"+os.EOL;
+              i += "  "+"char *"+param.name+" = (char*) malloc (s_"+param.name+".length() + 1);"+os.EOL;
               i += "  "+"strcpy("+param.name+", s_"+param.name+".c_str());"+os.EOL;
           parameters.push(i);
+          deallocations.push("  "+"free("+param.name+");");
           break;
         default:
           l.err(param.name + " param "+ param.type);
@@ -98,10 +100,10 @@ export class Generator {
       case "c_double":
       case "c_float":
       case "bool":
-        v8ReturnValue = "info.GetReturnValue().Set(result);"
+        v8ReturnValue =  "  "+"info.GetReturnValue().Set(result);";
         break;
       case "*c_char":
-        v8ReturnValue = "info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());"+os.EOL;
+        v8ReturnValue =  "  "+"info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());"+os.EOL;
         v8ReturnValue += "  "+"free(result);";
         break;
       case "void":
@@ -113,7 +115,8 @@ export class Generator {
     out += "NAN_METHOD("+func.name+") {"+os.EOL;
     out += "  "+parameters.join(os.EOL+"  ")+os.EOL;
     out += "  "+Generator.mapToCType(func.return)+" result = "+func.name+"("+externParams.join(", ")+");"+os.EOL;
-    out += "  "+v8ReturnValue+os.EOL;
+    out += v8ReturnValue+os.EOL;
+    out += deallocations.join(os.EOL)+os.EOL;
     out += "}"
     return out;
   }
