@@ -11,17 +11,17 @@
 		"conditions": [
 			['OS=="linux"', {
 				"libraries": [
-					"<(module_root_dir)/target/debug/libembed.so"
+					"<(module_root_dir)/build/Release/libembed.so"
 				]
 			}],
 			['OS=="mac"', {
 				"libraries": [
-					"../target/debug/libembed.dylib"
+					"../build/Release/libembed.dylib"
 				]
 			}],
 			['OS=="win"', {
 				"libraries": [
-					"../target/debug/embed.dll.lib"
+					"../build/Release/embed.dll.lib"
 				]
 			}]
 		]

@@ -17,7 +17,7 @@
     "int-build-rust": "cd test/resources && cargo build",
     "int-clean": "cd test/resources && node build-scripts/clean.js",
     "int-install-rust": "cd test/resources && node build-scripts/install-rust.js",
-    "int-build-addon": "npm run int-install-rust && cd test/resources && node-gyp configure -d && node-gyp build -d",
+    "int-build-addon": "npm run int-install-rust && cd test/resources && node-gyp configure && node-gyp build",
     "int-run": "cd test/integration && mocha",
     "int-test": "npm run int-clean && npm run int-install-deps && npm run int-test-short",
     "int-test-short": "npm run int-generate-cc && npm run int-build-rust && npm run int-install-rust && npm run int-build-addon && npm run int-run"

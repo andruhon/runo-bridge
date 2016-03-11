@@ -2,7 +2,7 @@ var fse = require('fs-extra');
 var path = require('path');
 
 var rustBuildDir = path.join('target','debug');
-var addonBuildDir = path.join('build','Debug');
+var addonBuildDir = path.join('build','Release');
 
 fse.readdirSync(rustBuildDir).forEach(function(file){
     try {
