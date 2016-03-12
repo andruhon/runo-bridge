@@ -36,11 +36,11 @@ However in order to build the source code, your rust and C++ compiler should be 
 
 **Generate V8 addon C++ code from Rust source source.rs**
 
-  runo-bridge generate <source> <output>
+    runo-bridge generate <source> <output>
 
 Example:
 
-  runo-bridge generate src/source.rs intermediates/addon.cc
+    runo-bridge generate src/source.rs intermediates/addon.cc
 
 RuNo will look for `no-manlge` `extern "C"` functions and will generate NodeJS addon boilerplate for them.
 
@@ -56,11 +56,11 @@ Do `npm install` first.
 
 Test RuNo bridge only:
 
-  npm run test
+    npm run test
 
 Test that generated addon actually works (integration tests):
 
-  npm run test-full
+    npm run test-full
 
 ##Motivation
 

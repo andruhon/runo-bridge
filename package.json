@@ -1,6 +1,6 @@
 {
   "name": "runo-bridge",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Simple Rust to NodeJS bridge",
   "repository": {
     "type": "git",
