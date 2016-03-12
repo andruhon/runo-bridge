@@ -30,7 +30,6 @@ before_install:
   - npm test
   - nvm install 5
   - nvm use 5
-  - nvm test
 
 script:
-  - npm run integration-test
+  - npm run test-full
