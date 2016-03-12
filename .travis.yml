@@ -17,6 +17,9 @@ matrix:
     - rust: nightly
 
 before_install:
+  - source $HOME/.nvm/nvm.sh
+  - nvm install stable
+  - nvm use stable
   - npm install
 
 script:
