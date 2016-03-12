@@ -12,7 +12,6 @@ describe('Generator', function() {
     assert.doesNotThrow(function(){
       new generator.Generator(input, template);
     }, Error);
-    assert.ok(false);
   });
 
   it('should not throw when generating', function () {
