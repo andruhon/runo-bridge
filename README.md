@@ -2,6 +2,8 @@
 
 **A Prototype! Please read whole readme first and use on your own risk!**
 
+[![Build Status](https://api.travis-ci.org/andruhon/runo-bridge.svg?branch=master)](http://travis-ci.org/andruhon/runo-bridge)
+
 **Call your Rust dynamic lib from Node JS with native C++ performance**
 
 Do not hesitate to ask a question or propose something, I've created a special discussion issue for your convenience: https://github.com/andruhon/runo-bridge/issues/1
