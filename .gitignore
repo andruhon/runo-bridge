@@ -1,3 +1,8 @@
 node_modules
 npm-debug.log
 dist
+test/resources/target
+test/resources/node_modules
+test/resources/build
+test/resources/Cargo.lock
+test/resources/src/addon.cc

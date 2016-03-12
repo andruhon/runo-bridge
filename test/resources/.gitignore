@@ -1,5 +1,0 @@
-target
-node_modules
-build
-Cargo.lock
-src/addon.cc
