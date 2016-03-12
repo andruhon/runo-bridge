@@ -24,9 +24,13 @@ matrix:
 
 before_install:
   - source $HOME/.nvm/nvm.sh
-  - nvm install stable
-  - nvm use stable
+  - nvm install 4
+  - nvm use 4
   - npm install
+  - npm test
+  - nvm install 5
+  - nvm use 5
+  - nvm test
 
 script:
-  - npm run test-full
+  - npm run integration-test
