@@ -1,4 +1,6 @@
-//Header
+export function addonTemplate(extern_c_functions: string, methods: string, inits: string) {
+
+return `//Header
 //This could go into separate header file defining interface:
 #ifndef NATIVE_EXTENSION_GRAB_H
 #define NATIVE_EXTENSION_GRAB_H
@@ -29,10 +31,13 @@ using Nan::To;
 /* extern interface for Rust functions */
 extern "C" {${extern_c_functions}
 }
+
 ${methods}
 
 NAN_MODULE_INIT(InitAll) {${inits}
 }
 
-
 NODE_MODULE(addon, InitAll)
+`;
+
+}

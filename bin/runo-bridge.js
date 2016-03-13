@@ -2,15 +2,14 @@
 
 process.title = 'runo-bridge';
 
-var generatorTemplate = 'DefaultNanGenerator';
+var generatorTemplate = 'DefaultNan';
+var generatorName = generatorTemplate+'Generator';
 
 var parser = require("../dist/Parser.js");
-var generator = require("../dist/"+generatorTemplate+".js");
+var generator = require("../dist/generators/"+generatorTemplate+"/"+generatorName+".js");
 var fs = require("fs");
 var path = require("path");
 var program = require('commander');
-
-var defaultTemplate =path.join(__dirname,"..","templates","DefaultNan.cc");
 
 program
   .version('0.0.1')
@@ -22,7 +21,6 @@ program
   .description('generate C++ addon from Rust or JSON input')
   .action(function(input, output) {
     console.log("generating from "+input);
-    var template = fs.readFileSync(defaultTemplate, 'utf8');
     var extname = path.extname(input);
     var p;
     new Promise(function(resolve, reject){
@@ -47,7 +45,7 @@ program
         }
       })
     }).then(function(inputVal){
-      var result = (new generator[generatorTemplate](inputVal, template)).generate();
+      var result = (new generator[generatorName](inputVal)).generate();
       fs.writeFileSync(output,result,'utf8');
       console.log("wrote content to "+output);
     }).catch(function(reason){
@@ -59,7 +57,6 @@ program
   .command('parse <input>')
   .description('parse Rust file and output JSON')
   .action(function(input, output) {
-    var template = fs.readFileSync(defaultTemplate, 'utf8');
     var extname = path.extname(input);
     var p;
     new Promise(function(resolve, reject){

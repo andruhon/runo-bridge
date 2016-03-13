@@ -1,4 +1,7 @@
 import {IInterfaceDefinition, IFunctionDefinition} from './interfaces/IABIInterface';
+import {Log, LOGLEV} from './Log';
+
+export const l = new Log(LOGLEV.ERR);
 
 export abstract class Generator {
 
@@ -9,7 +12,7 @@ export abstract class Generator {
   protected static fnDefPattern = 'pub extern "C" fn ';
   protected static fnSigPattern = "(\\w+)\\s*\\((.*)\\)\\s*(->)?\\s*((\\*\\w*\\s*)?\\w*)";
 
-  constructor(protected input: IInterfaceDefinition, protected template: string) {}
+  constructor(protected input: IInterfaceDefinition) {}
 
   abstract generate(): string;
 
