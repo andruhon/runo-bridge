@@ -2,13 +2,15 @@
 
 process.title = 'runo-bridge';
 
+var generatorTemplate = 'DefaultNanGenerator';
+
 var parser = require("../dist/Parser.js");
-var generator = require("../dist/Generator.js");
+var generator = require("../dist/"+generatorTemplate+".js");
 var fs = require("fs");
 var path = require("path");
 var program = require('commander');
 
-var defaultTemplate =path.join(__dirname,"..","templates","addon.cc");
+var defaultTemplate =path.join(__dirname,"..","templates","DefaultNan.cc");
 
 program
   .version('0.0.1')
@@ -45,7 +47,7 @@ program
         }
       })
     }).then(function(inputVal){
-      var result = (new generator.Generator(inputVal, template)).generate();
+      var result = (new generator[generatorTemplate](inputVal, template)).generate();
       fs.writeFileSync(output,result,'utf8');
       console.log("wrote content to "+output);
     }).catch(function(reason){

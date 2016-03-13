@@ -1,6 +1,10 @@
+export interface IFunctionParemeterDefinition {
+  name: string, type: string
+}
+
 export interface IFunctionDefinition {
   name: string;
-  parameters: {name: string, type: string}[];
+  parameters: IFunctionParemeterDefinition[];
   return: string;
 }
 
