@@ -6,6 +6,7 @@ export interface IFunctionDefinition {
   name: string;
   parameters: IFunctionParemeterDefinition[];
   return: string;
+  async?: boolean;
 }
 
 export interface IInterfaceDefinition {

@@ -41,6 +41,7 @@ export class DefaultNanGenerator extends Generator {
     return t.externCFunc(DefaultNanGenerator.allowedTypes, func);
   }
 
+  //TODO: check reserved words such as callback, argv and result
   protected createMethod (func:IFunctionDefinition): string {
     let parameters = [];
     let externParams = [];
