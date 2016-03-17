@@ -78,8 +78,7 @@ function v8asyncOutput(returnType: string){
 }
 
 function asyncWorker(
-  func: IFunctionDefinition,
-  parameters: string[]
+  func: IFunctionDefinition
 ) {
   let workerParams = func.parameters.map((p)=>{
     return {name: p.name, type: Generator.mapToCType(p.type)};
@@ -124,10 +123,19 @@ export function nanMethod(
   deallocations: string[],
   v8ReturnValue: string
 ) {
-return `
+let funcCall: string;
+if (func.async) {
+  funcCall = `
+  Nan::Callback * callback = new Nan::Callback(info[${externParams.length}].As<v8::Function>());
+  AsyncQueueWorker(new ${func.name}Worker(callback, ${externParams.join(", ")}));`;
+  v8ReturnValue = '';
+} else {
+  funcCall = `${Generator.mapToCType(func.return)} result = ${func.name}(${externParams.join(", ")});`;
+}
+return ` ${func.async?asyncWorker(func):''}
 NAN_METHOD(${func.name}) {`+
   `${parameters.join("")}
-  ${Generator.mapToCType(func.return)} result = ${func.name}(${externParams.join(", ")});`+
+  ${funcCall}`+
   `${v8ReturnValue}`+
   `${deallocations.join('')}
 }`;

@@ -38,4 +38,12 @@ describe('Integration', function() {
     assert.equal(Math.round(addon.float_multiply_plus2(3.14,2)), Math.round(3.14*2+2), "approx equal");
     assert.notEqual(addon.float_multiply_plus2(3.14,2), 3.14*2+2, "not exact equal with double calculation");
   });
+
+  // it('async', function (next) {
+  //   addon.double_multiply_plus2(3.14,2,function(result){
+  //       assert.equal(result, 3.14*2+2, "async double_multiply_plus2");
+  //       next();
+  //   });
+  // });
+
 });
