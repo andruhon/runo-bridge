@@ -90,6 +90,6 @@ Test that generated addon actually works (integration tests):
 It would be nice to have something simple to use with just implementing extern C method with C primitives without knowledge of V8. FFI seems to be a good option, however, unfortunately it is far to slow to call multiple functions, see: https://github.com/wtfil/rust-in-node#results
 
 ##Other options
-* https://github.com/rustbridge/neon/ Neon bridge
-* https://github.com/node-ffi/node-ffi Node FFI
+* https://github.com/rustbridge/neon/ Neon bridge (requires knowledge of V8)
+* https://github.com/node-ffi/node-ffi Node FFI (good, but slow)
 * https://github.com/andruhon/rust-in-node-examples implement your own addon to call Rust via C ABI
