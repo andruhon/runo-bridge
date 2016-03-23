@@ -39,11 +39,11 @@ describe('Integration', function() {
     assert.notEqual(addon.float_multiply_plus2(3.14,2), 3.14*2+2, "not exact equal with double calculation");
   });
 
-  // it('async', function (next) {
-  //   addon.double_multiply_plus2(3.14,2,function(result){
-  //       assert.equal(result, 3.14*2+2, "async double_multiply_plus2");
-  //       next();
-  //   });
-  // });
+  it('async should work', function (next) {
+    addon.double_multiply_plus2_async(3.14,2,function(result){
+        assert.equal(result, 3.14*2+2, "async double_multiply_plus2");
+        next();
+    });
+  });
 
 });

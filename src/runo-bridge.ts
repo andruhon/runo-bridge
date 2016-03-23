@@ -2,26 +2,41 @@
 
 process.title = 'runo-bridge';
 
+import {Parser, ASYNC, IParserSettings} from "./Parser";
+import * as fs from "fs";
+import * as path from "path";
+import * as program from "commander";
+
+
 var generatorTemplate = 'DefaultNan';
 var generatorName = generatorTemplate+'Generator';
-
-var parser = require("../dist/Parser.js");
 var generator = require("../dist/generators/"+generatorTemplate+"/"+generatorName+".js");
-var fs = require("fs");
-var path = require("path");
-var program = require('commander');
+const asyncHelp = `[values] NO|ALL|DETECT.
+  NO      do not wrap functions into async wrappers (default);
+  ALL     all functions will be called in a separate thread,
+          adding last param as a callback with result argument;
+  DETECT  detect functions with 'async' and
+          make them async as described above;
+`;
 
 program
-  .version('0.0.1')
+  .version('0.2.0')
   .description('RuNo bridge is a command-line utility to generate C++ boilerplate to call Rust natively from Node JS, using the C ABI');
 
 
 program
   .command('generate <input> <output>')
   .description('generate C++ addon from Rust or JSON input')
-  .action(function(input, output) {
-    console.log("generating from "+input);
+  .option('--async [value]', asyncHelp)
+  .action(function(input, output, options) {
     var extname = path.extname(input);
+    let settings:IParserSettings = {
+      verbosity: 1
+    }
+    if (options.async && typeof options.async == 'string') {
+      let async: number = ASYNC[options.async.toUpperCase() as string];
+      if (typeof async == 'number') settings.async = async;
+    }
     var p;
     new Promise(function(resolve, reject){
       fs.stat(input, function(err, stats){
@@ -38,7 +53,7 @@ program
             resolve(JSON.parse(fs.readFileSync(input, 'utf8')));
             break;
           case ".rs":
-            (new parser.Parser(fs.createReadStream(input), path.basename(input,extname))).parse().then(resolve);
+            (new Parser(fs.createReadStream(input), path.basename(input,extname), settings)).parse().then(resolve);
             break;
           default:
             reject("Unexpected input file extension, need .json or .rs");
@@ -56,7 +71,16 @@ program
 program
   .command('parse <input>')
   .description('parse Rust file and output JSON')
-  .action(function(input, output) {
+  .option('--async [value]', asyncHelp)
+  .action(function(input, options) {
+    //options.async
+    let settings:IParserSettings = {
+      verbosity: 1
+    }
+    if (options.async && typeof options.async == 'string') {
+      let async: number = ASYNC[options.async.toUpperCase() as string];
+      if (typeof async == 'number') settings.async = async;
+    }
     var extname = path.extname(input);
     var p;
     new Promise(function(resolve, reject){
@@ -71,7 +95,7 @@ program
       return new Promise(function(resolve, reject){
         switch (extname) {
           case ".rs":
-            (new parser.Parser(fs.createReadStream(input), path.basename(input,extname), {verbosity: 1})).parse().then(resolve);
+            (new Parser(fs.createReadStream(input), path.basename(input,extname), settings)).parse().then(resolve);
             break;
           default:
             reject("Unexpected input file extension, need .json or .rs");

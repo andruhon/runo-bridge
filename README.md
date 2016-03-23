@@ -38,13 +38,34 @@ However in order to build the source code, your rust and C++ compiler should be 
 
 **Generate V8 addon C++ code from Rust source source.rs**
 
-    runo-bridge generate <source> <output>
+    runo-bridge generate <source> <output> [options]
+
+**Options available**:
+
+--async [NO|ALL|DETECT] - With this option it is possible to make functions async.
+You don't need to mangle with V8 callbacks,
+RuNo will generate C++ boilerplate code for you, which will run function
+in a separate thread, take result from the function and pass value into callback.
+Again you just write a normal function and RuNo will do all thread magic for you.
+
+* NO      do not wrap functions into async wrappers (default);
+* ALL     all functions will be called in a separate thread, adding last param as a callback with result argument;
+* DETECT  detect functions with 'async' and make them async as described above;
+
+See double_multiply_plus2_async in [embed.rs](test/resources/src/embed.rs)
+and [integration/test.js](test/integration/test.js) for async usage example.
 
 Example:
 
     runo-bridge generate src/source.rs intermediates/addon.cc
 
 RuNo will look for `no-manlge` `extern "C"` functions and will generate NodeJS addon boilerplate for them.
+
+    runo-bridge generate src/source.rs intermediates/addon.cc --async DETECT
+
+same as above, plus detect functions with 'async' in the name and generate
+boilerplate code to run then asynchronously, adding last param as an async
+callback with a single param with a function result.
 
 It is also possible to **provide library binary interface definition as a JSON**
 

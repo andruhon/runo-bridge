@@ -1,19 +1,19 @@
 {
   "name": "runo-bridge",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Simple Rust to NodeJS bridge",
   "repository": {
     "type": "git",
     "url": "https://github.com/andruhon/runo-bridge"
   },
-  "main": "bin/runo-bridge.js",
-  "bin": "bin/runo-bridge.js",
+  "main": "dist/runo-bridge.js",
+  "bin": "dist/runo-bridge.js",
   "scripts": {
     "test": "npm run build && mocha",
     "test-full": "npm run build && mocha && npm run integration-test",
     "build": "tsc",
     "int-install-deps": "cd test/resources && npm install",
-    "int-generate-cc": "node bin/runo-bridge.js generate test/resources/src/embed.rs test/resources/src/addon.cc",
+    "int-generate-cc": "node dist/runo-bridge.js generate test/resources/src/embed.rs test/resources/src/addon.cc --async detect",
     "int-build-rust": "cd test/resources && cargo build",
     "int-clean": "cd test/resources && node build-scripts/clean.js",
     "int-install-rust": "cd test/resources && node build-scripts/install-rust.js",
@@ -29,11 +29,12 @@
   ],
   "license": "ISC",
   "devDependencies": {
+    "fs-extra": "^0.26.5",
     "mocha": "^2.4.5",
+    "retyped-commander-tsd-ambient": "^2.3.0-0",
     "retyped-node-tsd-ambient": "^1.5.3-0",
     "retyped-prettyjson-tsd-ambient": "0.0.0-0",
-    "typescript": "^1.8.2",
-    "fs-extra": "^0.26.5"
+    "typescript": "^1.8.2"
   },
   "dependencies": {
     "commander": "^2.9.0",

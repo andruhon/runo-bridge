@@ -3,3 +3,4 @@
 /// <reference path="../node_modules/typescript/lib/lib.es6.d.ts" />
 /// <reference path="../node_modules/retyped-node-tsd-ambient/node.d.ts" />
 /// <reference path="../node_modules/retyped-prettyjson-tsd-ambient/prettyjson.d.ts" />
+/// <reference path="../node_modules/retyped-commander-tsd-ambient/commander.d.ts" />

@@ -38,7 +38,7 @@ describe('Parser', function() {
     var p = new parser.Parser(fs.createReadStream(input), path.basename(input,extname), {verbosity: 0});
     return p.parse().then(function(result){
       assert.equal(result.module_name, "int_to_int", "result should contain module name");
-      assert.deepEqual(result.functions, [{"name":"int_in_int_out","parameters":[{"name":"input","type":"c_int"}],"return":"c_int"}], "result should contain int_to_int func");
+      assert.deepEqual(result.functions, [{"name":"int_in_int_out","parameters":[{"name":"input","type":"c_int"}],"return":"c_int", "async": false}], "result should contain int_to_int func");
     });
   });
 
@@ -47,9 +47,9 @@ describe('Parser', function() {
     return p.parse().then(function(result){
       assert.equal(result.module_name, "embed", "result should contain module name");
       assert.deepEqual(result.functions, [
-        {"name":"int_in_int_out","parameters":[{"name":"input","type":"c_int"}],"return":"c_int"},
-        {"name":"is_greather_than_42","parameters":[{"name":"input","type":"c_int"}],"return":"bool"},
-        {"name":"get_42","parameters":[{"name":"input","type":"bool"}],"return":"c_int"},
+        {"name":"int_in_int_out","parameters":[{"name":"input","type":"c_int"}],"return":"c_int", "async": false},
+        {"name":"is_greather_than_42","parameters":[{"name":"input","type":"c_int"}],"return":"bool", "async": false},
+        {"name":"get_42","parameters":[{"name":"input","type":"bool"}],"return":"c_int", "async": false},
         {"name": "rs_experimental_string",
             "parameters": [
               {
@@ -57,12 +57,27 @@ describe('Parser', function() {
                 "type": "*c_char"
               }
             ],
-            "return": "*c_char"
+            "return": "*c_char",
+            "async": false
         },
-        {"name":"float_multiply_plus2","parameters":[{"name":"in1","type":"c_float"},
-        {"name":"in2","type":"c_float"}],"return":"c_float"},
-        {"name":"double_multiply_plus2","parameters":[{"name":"in1","type":"c_double"},
-        {"name":"in2","type":"c_double"}],"return":"c_double"}
+        {
+          "name":"float_multiply_plus2",
+          "parameters":[{"name":"in1","type":"c_float"},{"name":"in2","type":"c_float"}],
+          "return":"c_float",
+          "async": false
+        },
+        {
+          "name":"double_multiply_plus2",
+          "parameters":[{"name":"in1","type":"c_double"},{"name":"in2","type":"c_double"}],
+          "return":"c_double",
+          "async": false
+        },
+        {
+          "name":"double_multiply_plus2_async",
+          "parameters":[{"name":"in1","type":"c_double"},{"name":"in2","type":"c_double"}],
+          "return":"c_double",
+          "async": false //Async should be disabled by default!
+        }
       ]);
     });
   });

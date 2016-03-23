@@ -53,3 +53,9 @@ pub extern "C" fn float_multiply_plus2(in1: c_float, in2: c_float) -> c_float{
 pub extern "C" fn double_multiply_plus2(in1: c_double, in2: c_double) -> c_double{
     in1*in2+(2 as c_double)
 }
+
+#[no_mangle]
+pub extern "C" fn double_multiply_plus2_async(in1: c_double, in2: c_double) -> c_double{
+    std::thread::sleep(std::time::Duration::from_millis(50));
+    return in1*in2+(2 as c_double);
+}
