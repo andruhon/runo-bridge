@@ -1,4 +1,6 @@
-#RuNo bridge Simple Rust to NodeJS bridge
+# This repository is archived
+
+# RuNo bridge Simple Rust to NodeJS bridge
 
 **A Prototype! Please read whole readme first and use on your own risk!**
 
